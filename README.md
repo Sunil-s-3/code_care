@@ -1,58 +1,86 @@
 # Cost Care — Healthcare Analytics Platform
 
-**Cost Care** is a modern full-stack healthcare cost analytics SaaS. It helps teams explore insurance spending patterns through interactive dashboards, JWT-secured authentication, and a production-ready FastAPI + Next.js architecture.
+**Cost Care** is a production-ready full-stack healthcare cost analytics platform. Explore insurance spending patterns through interactive dashboards, secure JWT authentication, and a modern SaaS-style UI.
 
-![Tech Stack](https://img.shields.io/badge/Next.js-14-black) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Aiven-336791) ![License](https://img.shields.io/badge/License-MIT-blue)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Aiven-336791)](https://aiven.io/)
+[![Deploy](https://img.shields.io/badge/Deploy-Vercel%20%2B%20Render-blue)](https://github.com/Sunil-s-3/code_care)
+
+**Repository:** https://github.com/Sunil-s-3/code_care
+
+---
+
+## Screenshots
+
+> Add screenshots to `docs/screenshots/` and link them here after deployment.
+
+| Page | Preview |
+|------|---------|
+| Login | _Coming soon — `docs/screenshots/login.png`_ |
+| Register | _Coming soon — `docs/screenshots/register.png`_ |
+| Dashboard | _Coming soon — `docs/screenshots/dashboard.png`_ |
+| Analytics Charts | _Coming soon — `docs/screenshots/charts.png`_ |
+| Profile | _Coming soon — `docs/screenshots/profile.png`_ |
 
 ---
 
 ## Project Overview
 
-| Component | Description |
-|-----------|-------------|
-| **Frontend** | Next.js 14, Tailwind CSS, Framer Motion, Recharts — glassmorphism UI, dark mode |
-| **Backend** | FastAPI, SQLAlchemy, pandas — JWT auth, analytics APIs |
-| **Database** | PostgreSQL (users table) — Aiven in production |
-| **Dataset** | Healthcare insurance CSV (`age`, `sex`, `bmi`, `children`, `smoker`, `region`, `charges`) |
+Cost Care helps healthcare teams visualize insurance cost drivers: age, BMI, smoking status, region, and gender. Users register, log in, and access a protected analytics dashboard backed by a real insurance dataset.
 
 ### Key Features
 
 - User registration & login (bcrypt + JWT)
-- Analytics dashboard with 5 KPI cards and 6 charts
-- CSV upload to refresh analytics
+- Auto-created PostgreSQL schema with legacy migration support
+- Analytics dashboard: 5 KPI cards + 6 Recharts visualizations
+- CSV upload to refresh analytics data
 - Downloadable analytics report (CSV)
-- Profile settings (phone number)
-- Responsive layout, loading skeletons, toast notifications
+- Profile settings (phone number update)
+- Glassmorphism UI, dark mode, toasts, loading skeletons
+- Mobile-responsive sidebar layout
 
 ### Repository Structure
 
 ```
 code_care/
-├── frontend/                 # Next.js app (deploy to Vercel)
-│   ├── app/                    # Pages: login, register, dashboard, profile
-│   ├── components/             # UI, auth, dashboard, charts
-│   ├── lib/                    # API client, auth helpers, types
+├── frontend/              # Next.js 14 → deploy to Vercel
+│   ├── app/                 # login, register, dashboard, profile
+│   ├── components/          # UI, auth, dashboard, charts
+│   ├── lib/                 # API client, auth, types
 │   └── vercel.json
-├── backend/                  # FastAPI app (deploy to Render)
-│   ├── app/                    # Routers, services, models, security
-│   ├── data/insurance.csv      # Bundled dataset (~1,338 rows)
-│   ├── scripts/                # Dataset generator
+├── backend/               # FastAPI → deploy to Render
+│   ├── app/                 # routers, services, models, security
+│   ├── data/insurance.csv   # bundled dataset (~1,338 rows)
+│   ├── scripts/             # dataset generator
 │   └── render.yaml
-├── .env.example                # Environment variable template
+├── .env.example
 └── README.md
 ```
 
 ---
 
-## Prerequisites
+## Tech Stack
 
-- **Node.js** 18+ and npm
-- **Python** 3.11+ (3.12 recommended)
-- **PostgreSQL** (local, Docker, or [Aiven](https://aiven.io/))
+| Layer | Technologies |
+|-------|----------------|
+| **Frontend** | Next.js 14, TypeScript, Tailwind CSS, Framer Motion, Recharts, next-themes |
+| **Backend** | FastAPI, SQLAlchemy, pandas, python-jose, passlib (bcrypt) |
+| **Database** | PostgreSQL (Aiven) |
+| **Auth** | JWT (Bearer), bcrypt password hashing |
+| **Deployment** | Vercel (frontend), Render (backend), Aiven (database) |
 
 ---
 
-## Setup Instructions (Local Development)
+## Prerequisites
+
+- Node.js 18+ and npm
+- Python 3.11+ (3.12 recommended)
+- PostgreSQL (local, Docker, or [Aiven](https://aiven.io/))
+
+---
+
+## Setup Instructions
 
 ### 1. Clone the repository
 
@@ -61,62 +89,51 @@ git clone https://github.com/Sunil-s-3/code_care.git
 cd code_care
 ```
 
-### 2. Configure environment variables
+### 2. Environment variables
 
-Copy the example env file and edit values:
+**Backend** — copy and edit:
 
 ```bash
-# Backend
 cp backend/.env.example backend/.env
 ```
 
-Edit `backend/.env`:
-
 ```env
-DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/costcare
-JWT_SECRET=your-long-random-secret-here
+DATABASE_URL=postgresql+psycopg://user:password@host:port/db?sslmode=require
+JWT_SECRET=your-long-random-secret
 CORS_ORIGINS=http://localhost:3000
 DATASET_PATH=./data/insurance.csv
 ```
 
+**Frontend** — copy and edit:
+
 ```bash
-# Frontend
 cp frontend/.env.local.example frontend/.env.local
 ```
-
-Edit `frontend/.env.local`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-> **Note:** Aiven connection strings use `postgresql://` — the backend auto-converts them to `postgresql+psycopg://`.
+> Aiven URLs using `postgresql://` are auto-converted to `postgresql+psycopg://` by the backend.
 
-### 3. Start PostgreSQL
-
-Create a database named `costcare` (or match your `DATABASE_URL`). Tables are created automatically on first API startup.
-
-### 4. Run the backend
+### 3. Run the backend
 
 ```bash
 cd backend
 python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# macOS / Linux
-source venv/bin/activate
-
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # macOS/Linux
 pip install -r requirements.txt
-python scripts/generate_dataset.py   # only if insurance.csv is missing
 uvicorn app.main:app --reload --port 8000
 ```
 
 - API: http://localhost:8000  
-- Swagger docs: http://localhost:8000/docs  
+- Docs: http://localhost:8000/docs  
+- Health: http://localhost:8000/health  
 
-### 5. Run the frontend
+Tables are created automatically on startup (`Base.metadata.create_all` + legacy column migration).
+
+### 4. Run the frontend
 
 ```bash
 cd frontend
@@ -124,94 +141,106 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 → **Register** → **Login** → **Dashboard**.
+Open http://localhost:3000 → Register → Login → Dashboard.
 
 ---
 
-## API Reference
+## API Overview
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
 | `POST` | `/api/register` | No | Create account |
-| `POST` | `/api/login` | No | Obtain JWT |
+| `POST` | `/api/login` | No | Obtain JWT token |
 | `GET` | `/api/me` | Yes | Current user profile |
 | `PATCH` | `/api/profile` | Yes | Update phone number |
-| `GET` | `/api/dashboard-data` | Yes | Analytics JSON |
-| `POST` | `/api/upload-csv` | Yes | Replace dataset (multipart) |
-| `GET` | `/api/report` | Yes | Download CSV report |
+| `GET` | `/api/dashboard-data` | Yes | Analytics JSON (stats + charts) |
+| `POST` | `/api/upload-csv` | Yes | Replace dataset (multipart, max 5MB) |
+| `GET` | `/api/report` | Yes | Download CSV analytics report |
+| `GET` | `/health` | No | Health check |
+
+**Register body example:**
+
+```json
+{
+  "user_id": "CC001",
+  "user_name": "johndoe",
+  "password": "securepass",
+  "email": "john@example.com",
+  "phone_number": "+1234567890"
+}
+```
 
 ---
 
 ## Deployment
 
-### Database — Aiven PostgreSQL
+### Ready for production
 
-1. Create a PostgreSQL service on [Aiven](https://aiven.io/).
-2. Copy the **connection string** (include `?sslmode=require` if prompted).
-3. Use this as `DATABASE_URL` on Render.
+| Service | Platform | Root directory |
+|---------|----------|----------------|
+| Frontend | [Vercel](https://vercel.com/) | `frontend` |
+| Backend | [Render](https://render.com/) | `backend` |
+| Database | [Aiven PostgreSQL](https://aiven.io/) | — |
 
-### Backend — Render
+### 1. Aiven PostgreSQL
 
-1. Push this repo to GitHub.
-2. In [Render](https://render.com/), create a **Web Service** from the repo.
-3. Settings:
-   - **Root directory:** `backend`
-   - **Build command:** `pip install -r requirements.txt`
-   - **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-4. Environment variables:
+1. Create a PostgreSQL service.
+2. Copy the connection string (include `?sslmode=require`).
+3. Use as `DATABASE_URL` on Render.
 
-   | Key | Value |
-   |-----|-------|
-   | `DATABASE_URL` | Aiven PostgreSQL URL |
-   | `JWT_SECRET` | Long random string |
-   | `JWT_ALGORITHM` | `HS256` |
-   | `ACCESS_TOKEN_EXPIRE_MINUTES` | `60` |
-   | `CORS_ORIGINS` | `https://your-app.vercel.app` |
-   | `DATASET_PATH` | `./data/insurance.csv` |
+### 2. Render (Backend)
 
-5. Deploy. Note your API URL, e.g. `https://cost-care-api.onrender.com`.
+1. Connect GitHub repo: `Sunil-s-3/code_care`.
+2. **Root directory:** `backend`
+3. **Build command:** `pip install -r requirements.txt`
+4. **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5. **Environment variables:**
 
-Alternatively, use the included [`backend/render.yaml`](backend/render.yaml) Blueprint.
+| Variable | Example |
+|----------|---------|
+| `DATABASE_URL` | Aiven connection string |
+| `JWT_SECRET` | Long random string |
+| `CORS_ORIGINS` | `https://your-app.vercel.app` |
+| `DATASET_PATH` | `./data/insurance.csv` |
 
-### Frontend — Vercel
+Or deploy via [`backend/render.yaml`](backend/render.yaml) Blueprint.
 
-1. Import the GitHub repo in [Vercel](https://vercel.com/).
-2. Settings:
-   - **Root directory:** `frontend`
-   - **Framework preset:** Next.js
-3. Environment variable:
+### 3. Vercel (Frontend)
 
-   | Key | Value |
-   |-----|-------|
-   | `NEXT_PUBLIC_API_URL` | Your Render API URL |
+1. Import repo `Sunil-s-3/code_care`.
+2. **Root directory:** `frontend`
+3. **Framework:** Next.js
+4. **Environment variable:**
 
-4. Deploy. Update Render `CORS_ORIGINS` with your Vercel URL if not already set.
+| Variable | Value |
+|----------|-------|
+| `NEXT_PUBLIC_API_URL` | `https://your-api.onrender.com` |
+
+5. Deploy, then update Render `CORS_ORIGINS` with your Vercel URL.
 
 ---
 
-## Security Notes
+## Security
 
-- Never commit `.env` or `.env.local` files (see `.gitignore`).
-- Use a strong `JWT_SECRET` in production.
-- Keep `CORS_ORIGINS` restricted to your frontend domain(s).
-- CSV uploads are limited to 5MB and validated column names.
+- Never commit `.env` or `.env.local` (see [`.gitignore`](.gitignore))
+- Use a strong `JWT_SECRET` in production
+- Restrict `CORS_ORIGINS` to your frontend domain(s)
+- Passwords hashed with bcrypt (cost factor 12)
 
 ---
 
 ## GitHub Authentication (Personal Access Token)
 
-If `git push` asks for credentials:
+If `git push` prompts for credentials:
 
-1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)**.
-2. **Generate new token (classic)** with scope **`repo`**.
+1. GitHub → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
+2. **Generate new token** with **`repo`** scope
 3. When prompted:
-   - **Username:** your GitHub username  
+   - **Username:** your GitHub username
    - **Password:** paste the token (not your GitHub password)
 
-For HTTPS remotes on Windows, you can also use:
-
 ```bash
-git config credential.helper manager
+git config --global credential.helper manager   # Windows credential manager
 ```
 
 ---
